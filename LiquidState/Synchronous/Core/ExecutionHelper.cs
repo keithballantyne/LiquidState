@@ -62,6 +62,11 @@ namespace LiquidState.Synchronous.Core
             }
         }
 
+        internal static bool CanHandleTriggerCore<TState, TTrigger>(TTrigger trigger, RawStateMachineBase<TState, TTrigger> machine)
+        {
+            return null != ExecutionHelper.FindAndEvaluateTriggerRepresentation(trigger, machine);
+        }
+        
         internal static TriggerRepresentation<TTrigger, TState> FindAndEvaluateTriggerRepresentation<TState, TTrigger>(TTrigger trigger, RawStateMachineBase<TState, TTrigger> machine)
         {
             Contract.Requires(machine != null);

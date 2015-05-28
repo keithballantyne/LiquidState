@@ -17,6 +17,7 @@ namespace LiquidState.Synchronous.Core
         void Fire<TArgument>(ParameterizedTrigger<TTrigger, TArgument> parameterizedTrigger, TArgument argument);
         void Fire(TTrigger trigger);
         void MoveToState(TState state, StateTransitionOption option = StateTransitionOption.Default);
+        bool CanHandleTrigger(TTrigger trigger);
     }
 
     [ContractClassFor(typeof (IStateMachine<,>))]
@@ -33,6 +34,7 @@ namespace LiquidState.Synchronous.Core
             Contract.Requires<NullReferenceException>(parameterizedTrigger != null);
         }
 
+        public abstract bool CanHandleTrigger(TTrigger trigger);
         public abstract void Fire(TTrigger trigger);
         public abstract TState CurrentState { get; }
         public abstract IEnumerable<TTrigger> CurrentPermittedTriggers { get; }

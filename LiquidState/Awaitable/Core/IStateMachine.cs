@@ -19,6 +19,7 @@ namespace LiquidState.Awaitable.Core
             TArgument argument);
         Task FireAsync(TTrigger trigger);
         Task MoveToStateAsync(TState state, StateTransitionOption option = StateTransitionOption.Default);
+        Task<bool> CanHandleTriggerAsync(TTrigger trigger);
     }
 
     [ContractClassFor(typeof (IStateMachine<,>))]
@@ -36,6 +37,7 @@ namespace LiquidState.Awaitable.Core
             return default(Task);
         }
 
+        public abstract Task<bool> CanHandleTriggerAsync(TTrigger trigger);
         public abstract Task FireAsync(TTrigger trigger);
         public abstract TState CurrentState { get; }
         public abstract IEnumerable<TTrigger> CurrentPermittedTriggers { get; }

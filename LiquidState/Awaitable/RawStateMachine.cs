@@ -40,6 +40,11 @@ namespace LiquidState.Awaitable
             return !IsEnabled ? TaskHelpers.CompletedTask : ExecutionHelper.MoveToStateCoreAsync(state, option, this);
         }
 
+        public virtual Task<bool> CanHandleTriggerAsync(TTrigger trigger)
+        {
+            return !IsEnabled ? Task.FromResult(false) : ExecutionHelper.CanHandleTriggerAsyncCore(trigger, this);
+        }
+        
         public virtual Task FireAsync<TArgument>(ParameterizedTrigger<TTrigger, TArgument> parameterizedTrigger,
             TArgument argument)
         {

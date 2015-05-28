@@ -203,6 +203,46 @@ namespace LiquidState.Synchronous.Core
             return this;
         }
 
+        public StateConfigurationHelper<TState, TTrigger> PermitDynamicIf(Func<bool> predicate,
+            TTrigger trigger,
+            Func<TState> targetStatePredicate,
+            Action onEntryAction)
+        {
+            Contract.Requires<ArgumentNullException>(trigger != null);
+            Contract.Requires<ArgumentNullException>(targetStatePredicate != null);
+
+            if (FindTriggerRepresentation(trigger, currentStateRepresentation) != null)
+                ExceptionHelper.ThrowExclusiveOperation();
+
+            var rep = CreateTriggerRepresentation(trigger, currentStateRepresentation);
+            rep.NextStateRepresentationPredicate = targetStatePredicate;
+            rep.OnTriggerAction = onEntryAction;
+            rep.ConditionalTriggerPredicate = predicate;
+            rep.TransitionFlags |= TransitionFlag.DynamicState;
+
+            return this;
+        }
+
+        public StateConfigurationHelper<TState, TTrigger> PermitDynamicIf<TArgument>(Func<bool> predicate,
+            ParameterizedTrigger<TTrigger, TArgument> trigger,
+            Func<TState> targetStatePredicate,
+            Action<TArgument> onEntryAction)
+        {
+            Contract.Requires<ArgumentNullException>(trigger != null);
+            Contract.Requires<ArgumentNullException>(targetStatePredicate != null);
+
+            if (FindTriggerRepresentation(trigger.Trigger, currentStateRepresentation) != null)
+                ExceptionHelper.ThrowExclusiveOperation();
+
+            var rep = CreateTriggerRepresentation(trigger.Trigger, currentStateRepresentation);
+            rep.NextStateRepresentationPredicate = targetStatePredicate;
+            rep.OnTriggerAction = onEntryAction;
+            rep.ConditionalTriggerPredicate = predicate;
+            rep.TransitionFlags |= TransitionFlag.DynamicState;
+
+            return this;
+        }
+
         internal static StateRepresentation<TState, TTrigger> FindOrCreateStateRepresentation(TState state,
             Dictionary<TState, StateRepresentation<TState, TTrigger>> config)
         {

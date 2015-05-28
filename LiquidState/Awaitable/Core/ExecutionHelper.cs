@@ -80,6 +80,11 @@ namespace LiquidState.Awaitable.Core
             }
         }
 
+        internal static async Task<bool> CanHandleTriggerAsyncCore<TState, TTrigger>(TTrigger trigger, RawStateMachineBase<TState, TTrigger> machine)
+        {
+            return ExecutionHelper.FindAndEvaluateTriggerRepresentationAsync(trigger, machine).Result != null;
+        }
+
         internal static async Task<TriggerRepresentation<TTrigger, TState>> FindAndEvaluateTriggerRepresentationAsync<TState, TTrigger>(TTrigger trigger, RawStateMachineBase<TState, TTrigger> machine)
         {
             Contract.Requires(machine != null);

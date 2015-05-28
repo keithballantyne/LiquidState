@@ -49,6 +49,12 @@ namespace LiquidState.Synchronous
             ExecutionHelper.MoveToStateCore(state, option, this);
         }
 
+        public virtual bool CanHandleTrigger(TTrigger trigger)
+        {
+            if (!IsEnabled) return false;
+            return ExecutionHelper.CanHandleTriggerCore(trigger, this);
+        }
+
         public virtual void Fire<TArgument>(ParameterizedTrigger<TTrigger, TArgument> parameterizedTrigger,
             TArgument argument)
         {
