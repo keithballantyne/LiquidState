@@ -82,7 +82,24 @@ namespace LiquidState.Awaitable.Core
 
         internal static async Task<bool> CanHandleTriggerAsyncCore<TState, TTrigger>(TTrigger trigger, RawStateMachineBase<TState, TTrigger> machine)
         {
-            return ExecutionHelper.FindAndEvaluateTriggerRepresentationAsync(trigger, machine).Result != null;
+            Contract.Requires(machine != null);
+
+            var triggerRep = StateConfigurationHelper<TState, TTrigger>.FindTriggerRepresentation(trigger,
+                machine.CurrentStateRepresentation);
+
+            if (triggerRep == null)
+                return false;
+
+            if (CheckFlag(triggerRep.TransitionFlags, TransitionFlag.TriggerPredicateReturnsTask))
+            {
+                var predicate = (Func<Task<bool>>)triggerRep.ConditionalTriggerPredicate;
+                return predicate == null || await predicate();
+            }
+            else
+            {
+                var predicate = (Func<bool>)triggerRep.ConditionalTriggerPredicate;
+                return predicate == null ||  predicate();
+            }
         }
 
         internal static async Task<TriggerRepresentation<TTrigger, TState>> FindAndEvaluateTriggerRepresentationAsync<TState, TTrigger>(TTrigger trigger, RawStateMachineBase<TState, TTrigger> machine)
